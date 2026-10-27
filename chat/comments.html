@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Comments | Robust Data Modeling</title>
+  <title>Comments | Ocean Two Condominium</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="/comment-widget.css?v=2">
+  <!-- Relative path: the CSS sits next to this page in /chat/ -->
+  <link rel="stylesheet" href="./comment-widget.css?v=3">
   <style>
     body { margin: 0; padding: 32px 16px 64px; background: #f6f7f9; color: #161b26;
            font-family: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif; }
@@ -17,7 +18,7 @@
 </head>
 <body>
   <main>
-    <p><a href="https://RobustDataModeling.com">RobustDataModeling</a></p>
+    <p><a href="../">&larr; Ocean Two home</a></p>
     <h1>Comments</h1>
     <p class="lead">Share your questions and feedback. Comments over 500 characters get a suggested shorter version, and insulting language is not posted.</p>
 
@@ -28,7 +29,8 @@
     // Address of the Render web service, with no trailing slash.
     window.COMMENTS_API_BASE = 'https://rdm-comments-api.onrender.com';
   </script>
-  <script src="/comment-widget.js?v=2"></script>
+  <!-- Relative path: the JS sits next to this page in /chat/ -->
+  <script src="./comment-widget.js?v=3"></script>
   <script>
     CommentWidget.mount(document.getElementById('comments'), {
       api: CommentWidget.restApi(window.COMMENTS_API_BASE, location.pathname),  // each page keeps its own comments
@@ -36,5 +38,10 @@
       summarize: summarizeComment
     });
   </script>
+
+  <!-- Optional: Bylaws Assistant chat bubble (bottom-right corner) -->
+  <script src="./chat-widget.js"
+          data-api-url="https://bylaws-assistant.onrender.com/ask"
+          data-title="Bylaws Assistant"></script>
 </body>
 </html>
