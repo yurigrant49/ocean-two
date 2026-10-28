@@ -921,21 +921,21 @@
                 </div>
                 <div class="status" id="formStatus" role="status" aria-live="polite"></div>
               </form>
-              <div class="profile-preview" id="profilePreview">
-                <div class="section-label">Candidate profile preview</div>
-                <h3 id="previewName"></h3>
-                <div class="meta" id="previewMeta"></div>
-                <div id="previewContent"></div>
-                <div class="form-actions">
-                  <button class="btn" type="button" id="printBtn">Print / save PDF</button
-                  ><button class="btn" type="button" id="closePreview">Close preview</button>
-                </div>
-              </div>
               <div class="privacy">
                 <strong>Privacy:</strong> Your profile is stored by the association and stays hidden until it
                 has been reviewed. Once approved, it may be shown to other residents with the name, unit and
                 public contact details you entered above. The email address and phone number of your account
                 are never shown.
+              </div>
+            </div>
+            <div class="profile-preview" id="profilePreview">
+              <div class="section-label">Candidate profile preview</div>
+              <h3 id="previewName"></h3>
+              <div class="meta" id="previewMeta"></div>
+              <div id="previewContent"></div>
+              <div class="form-actions">
+                <button class="btn" type="button" id="printBtn">Print / save PDF</button
+                ><button class="btn" type="button" id="closePreview">Close preview</button>
               </div>
             </div>
           </div>
@@ -1313,7 +1313,7 @@
             .catch(function (err) {
               if (err.status === 401) {
                 showStatus("Your session has ended. Please log in again.", "error");
-                MemberAccess.open("login");
+                if (window.MemberAccess) MemberAccess.open("login");
               } else if (err.status === 400 || err.status === 409) {
                 showStatus(err.message, "error");
               } else {
@@ -1365,7 +1365,8 @@
           if (b.dataset.action === "edit") fillForm(p);
           if (b.dataset.action === "preview") {
             showPreview(p);
-            if (MemberAccess.user) $("registration").scrollIntoView({ behavior: "smooth", block: "start" });
+            // Every visitor (logged in or not) can read an approved profile.
+            $("profilePreview").scrollIntoView({ behavior: "smooth", block: "start" });
           }
           if (
             b.dataset.action === "delete" &&
@@ -1436,6 +1437,14 @@
           clearStatus();
           refreshAll();
         });
+
+        // If the login service could not be reached, access.js never loaded and
+        // MemberAccess does not exist. Still show the public list instead of crashing.
+        if (!window.MemberAccess) {
+          started = true;
+          refreshAll();
+          return;
+        }
 
         MemberAccess.ready.then(function () {
           started = true;
