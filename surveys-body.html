@@ -477,7 +477,7 @@
     seedHistory(tennis, [2, 3, 4, 4, 2], [1, 1, 3, 3, 2], 7); seedBallots(tennis, 3, [2, 3, 4, 4, 2]);
     var gm = addSurvey({ question: "What is your satisfaction with our new General Manager?", project_name: "General Manager hire", project_status: "completed", starts_on: D.add(thisMon, -56), eligibility: "unit" });
     seedHistory(gm, [0, 0, 1, 3, 8], [0, 0, 0, 2, 8], 8); seedBallots(gm, 5, [0, 0, 1, 3, 8]);
-    var deck = addSurvey({ question: "How strongly do you support replacing the pool deck furniture next spring?", project_name: "Pool deck furniture", project_status: "proposed", starts_on: D.add(thisMon, -14), ends_on: D.add(thisMon, 27) });
+    var deck = addSurvey({ question: "Rate your level of satisfaction with the use of common property", project_name: "Pool deck furniture", project_status: "proposed", starts_on: D.add(thisMon, -14), ends_on: D.add(thisMon, 27) });
     seedHistory(deck, [2, 2, 3, 5, 4], null, 2); seedBallots(deck, 2, [2, 2, 3, 5, 4]);
     var lobby = addSurvey({ question: "What is your satisfaction with the new lobby lighting?", project_name: "Lobby lighting", project_status: "completed", starts_on: D.add(thisMon, -63), ends_on: D.add(thisMon, -22) });
     seedHistory(lobby, [1, 1, 2, 6, 5], null, 6); lobby.last_aggregated_start = null;
