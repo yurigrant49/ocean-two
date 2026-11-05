@@ -1,0 +1,838 @@
+<title>Ocean Two Resident Surveys</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+  /* Layout: Ocean Two site chrome (deep topbar, sticky white header, navy hero band),
+     then one wide survey ledger (Question | Your estimation | Total average), Board console below. */
+  :root {
+    --navy: #123b4a; --deep: #0b2c38; --sea: #247f89; --aqua: #dff2f0; --sand: #f6f1e7; --mint: #8bd6cc;
+    --ink: #20343a; --muted: #5d7076; --line: #e3e9e7; --bg: #ffffff; --panel: #ffffff; --soft: #f4f8f7;
+    --hero-ink: #eaf5f4; --on-accent: #ffffff;
+    --good: #2f7d4f; --warn: #a3620b; --bad: #b2412c;
+    --d1: #c4553f; --d2: #e5a493; --d3: #bcc5c6; --d4: #7cc3bb; --d5: #1f7a84;
+    --shadow: 0 18px 50px rgba(13, 49, 59, 0.09);
+    --font: "Inter", "Segoe UI", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --navy: #0f3442; --deep: #08212b; --sea: #4fb3bc; --aqua: #133e45; --sand: #1c2a2d; --mint: #8bd6cc;
+    --ink: #e2eeec; --muted: #9fb3b6; --line: #24393f; --bg: #0c1c22; --panel: #11262d; --soft: #142c33;
+    --hero-ink: #e2f2f0; --on-accent: #06222a;
+    --good: #6cc790; --warn: #e7b05a; --bad: #ef8a74;
+    --d1: #e0715b; --d2: #b8806f; --d3: #6c7a7d; --d4: #4f9d95; --d5: #74d0d6;
+    --shadow: 0 18px 50px rgba(0, 0, 0, 0.35); color-scheme: dark; } }
+  :root[data-theme="dark"] {
+    --navy: #0f3442; --deep: #08212b; --sea: #4fb3bc; --aqua: #133e45; --sand: #1c2a2d; --mint: #8bd6cc;
+    --ink: #e2eeec; --muted: #9fb3b6; --line: #24393f; --bg: #0c1c22; --panel: #11262d; --soft: #142c33;
+    --hero-ink: #e2f2f0; --on-accent: #06222a;
+    --good: #6cc790; --warn: #e7b05a; --bad: #ef8a74;
+    --d1: #e0715b; --d2: #b8806f; --d3: #6c7a7d; --d4: #4f9d95; --d5: #74d0d6;
+    --shadow: 0 18px 50px rgba(0, 0, 0, 0.35); color-scheme: dark; }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; font-family: var(--font); color: var(--ink); background: var(--bg); line-height: 1.55; font-size: 15px; }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--panel); }
+  a { color: inherit; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--mint); outline-offset: 2px; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .num { font-variant-numeric: tabular-nums; }
+
+  .topbar { background: var(--deep); color: var(--hero-ink); font-size: .82rem; }
+  .topbar .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-block: 8px; }
+  header.site { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--panel); border-bottom: 1px solid var(--line); }
+  header.site .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; flex-wrap: wrap; }
+  .brand { text-decoration: none; display: flex; flex-direction: column; line-height: 1.05; }
+  .brand b { font-size: 1.15rem; letter-spacing: .22em; color: var(--navy); }
+  :root[data-theme="dark"] .brand b { color: var(--mint); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .brand b { color: var(--mint); } }
+  .brand span { font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  nav.links { display: flex; gap: 2px; flex-wrap: wrap; }
+  nav.links a { text-decoration: none; padding: 8px 9px; border-radius: 8px; font-size: .84rem; font-weight: 650; color: var(--muted); }
+  nav.links a:hover { color: var(--sea); background: var(--soft); }
+  nav.links a[aria-current="page"] { color: var(--on-accent); background: var(--sea); }
+
+  .hero { background: var(--navy); color: var(--hero-ink); }
+  .hero .wrap { padding-block: 40px 34px; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 32px; align-items: end; }
+  .eyebrow { font-size: .74rem; letter-spacing: .16em; text-transform: uppercase; color: var(--mint); font-weight: 700; margin: 0 0 8px; }
+  .hero h1 { margin: 0 0 10px; font-size: clamp(1.9rem, 4vw, 2.7rem); line-height: 1.1; letter-spacing: -.02em; text-wrap: balance; }
+  .hero p { margin: 0; max-width: 60ch; opacity: .9; }
+  .weekcard { border: 1px solid rgba(255,255,255,.18); border-radius: 14px; padding: 16px 18px; display: grid; gap: 4px; }
+  .weekcard .lbl { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--mint); font-weight: 700; }
+  .weekcard .big { font-size: 1.35rem; font-weight: 750; }
+  .weekcard .sub { font-size: .86rem; opacity: .85; }
+
+  .account { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .who { font-size: .84rem; color: var(--muted); }
+  .badge { display: inline-flex; align-items: center; gap: 5px; font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; background: var(--aqua); color: var(--sea); }
+  .btn { border: 1px solid var(--line); background: var(--panel); border-radius: 10px; padding: 8px 14px; font-weight: 650; cursor: pointer; font-size: .88rem; }
+  .btn:hover { border-color: var(--sea); color: var(--sea); }
+  .btn.primary { background: var(--sea); color: var(--on-accent); border-color: var(--sea); }
+  .btn.primary:hover { filter: brightness(1.08); color: var(--on-accent); }
+  .btn.danger { color: var(--bad); }
+  .btn.small { padding: 5px 10px; font-size: .8rem; border-radius: 8px; }
+  .btn:disabled { opacity: .55; cursor: not-allowed; }
+
+  .demo { background: var(--sand); border-bottom: 1px solid var(--line); font-size: .86rem; }
+  .demo .wrap { display: flex; align-items: center; gap: 10px 16px; flex-wrap: wrap; padding-block: 10px; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--panel); }
+  .seg button { border: 0; background: transparent; padding: 6px 11px; cursor: pointer; font-size: .82rem; font-weight: 600; color: var(--muted); }
+  .seg button[aria-pressed="true"] { background: var(--sea); color: var(--on-accent); }
+
+  main { padding-block: 28px 56px; display: grid; gap: 36px; }
+  .sectionhead { display: flex; justify-content: space-between; align-items: end; gap: 12px 20px; flex-wrap: wrap; margin-bottom: 14px; }
+  h2 { margin: 0; font-size: 1.35rem; letter-spacing: -.01em; }
+  .hint { color: var(--muted); font-size: .88rem; margin: 2px 0 0; }
+  .filters { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .check { display: inline-flex; gap: 6px; align-items: center; font-size: .86rem; color: var(--muted); }
+
+  .ledger { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--panel); box-shadow: var(--shadow); }
+  table.surveys { width: 100%; border-collapse: collapse; }
+  .surveys th { text-align: left; font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 700; padding: 12px 18px; background: var(--soft); border-bottom: 1px solid var(--line); }
+  .surveys td { padding: 18px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .surveys tr:last-child td { border-bottom: 0; }
+  .surveys th:nth-child(2), .surveys th:nth-child(3) { width: 270px; }
+  .q { font-weight: 650; font-size: 1.02rem; margin: 6px 0 6px; text-wrap: pretty; }
+  .meta { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: .8rem; color: var(--muted); }
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; border: 1px solid currentColor; }
+  .chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .chip.completed { color: var(--good); }
+  .chip.ongoing { color: var(--warn); }
+  .chip.proposed { color: var(--sea); }
+  .chip.ended { color: var(--muted); }
+  .proj { font-size: .82rem; color: var(--muted); font-weight: 600; margin-left: 6px; }
+  .linkbtn { background: none; border: 0; padding: 0; color: var(--sea); font-weight: 650; cursor: pointer; font-size: .8rem; text-decoration: underline; text-underline-offset: 3px; }
+
+  .rate { display: flex; gap: 6px; }
+  .rate button { width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--line); background: var(--panel); font-weight: 750; cursor: pointer; font-size: .95rem; transition: transform .12s, border-color .12s; }
+  .rate button:not(:disabled):hover { border-color: var(--sea); color: var(--sea); transform: translateY(-2px); }
+  .rate button.mine { background: var(--sea); border-color: var(--sea); color: var(--on-accent); }
+  .rate button:disabled:not(.mine) { opacity: .4; cursor: default; }
+  .scale { display: flex; justify-content: space-between; width: 224px; max-width: 100%; font-size: .7rem; color: var(--muted); margin-top: 5px; }
+  .note { font-size: .8rem; color: var(--muted); margin-top: 6px; }
+  .note.ok { color: var(--good); font-weight: 600; }
+
+  .avg { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; align-items: center; }
+  .avg .val { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; line-height: 1; }
+  .avg .val small { font-size: .9rem; color: var(--muted); font-weight: 600; }
+  .avg .val.none { color: var(--muted); font-size: 1.6rem; }
+  .avg .spark { justify-self: end; }
+  .avg .info { grid-column: 1 / -1; font-size: .8rem; color: var(--muted); }
+  .trend { font-size: .78rem; font-weight: 700; }
+  .trend.up { color: var(--good); } .trend.down { color: var(--bad); } .trend.flat { color: var(--muted); }
+  .empty { padding: 36px 18px; text-align: center; color: var(--muted); }
+
+  .grid2 { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  .panel { border: 1px solid var(--line); border-radius: 16px; background: var(--panel); padding: 22px; }
+  .panel h3 { margin: 0 0 4px; font-size: 1.05rem; }
+  form.new { display: grid; gap: 14px; margin-top: 14px; }
+  label.f { display: grid; gap: 5px; font-size: .84rem; font-weight: 650; }
+  label.f span.opt { color: var(--muted); font-weight: 500; }
+  input[type="text"], input[type="date"], select, textarea { border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; background: var(--bg); width: 100%; min-width: 0; }
+  textarea { resize: vertical; min-height: 64px; }
+  fieldset { border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px 12px; margin: 0; display: grid; gap: 8px; min-width: 0; }
+  legend { font-size: .84rem; font-weight: 650; padding: 0 4px; }
+  .radios { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: .88rem; }
+  .radios label { display: inline-flex; gap: 6px; align-items: center; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .durrow { display: grid; gap: 8px; font-size: .88rem; }
+  .durrow label { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .durrow input[type="date"] { width: auto; }
+  .formstatus { font-size: .86rem; min-height: 1.2em; }
+  .formstatus.err { color: var(--bad); } .formstatus.ok { color: var(--good); }
+
+  .manage { display: grid; gap: 10px; margin-top: 12px; }
+  .mitem { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: grid; gap: 8px; }
+  .mitem .t { font-weight: 650; font-size: .92rem; }
+  .mitem .acts { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .mitem .acts input[type="date"] { width: auto; padding: 5px 8px; font-size: .82rem; }
+
+  .how ol { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; counter-reset: s; }
+  .how li { counter-increment: s; border-top: 2px solid var(--sea); padding-top: 12px; font-size: .9rem; color: var(--muted); }
+  .how li b { display: block; color: var(--ink); margin-bottom: 4px; }
+  .how li b::before { content: counter(s) ". "; color: var(--sea); }
+
+  .modal { position: fixed; inset: 0; z-index: 50; background: rgba(6, 24, 30, .55); display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+  .modal .box { background: var(--panel); border-radius: 18px; width: min(860px, 100%); max-height: 100%; overflow: auto; padding: 22px; box-shadow: var(--shadow); }
+  .modal .head { display: flex; justify-content: space-between; gap: 16px; align-items: start; }
+  .modal h3 { margin: 6px 0 4px; font-size: 1.15rem; text-wrap: balance; }
+  .kpis { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 14px 0 4px; }
+  .kpis div { display: grid; }
+  .kpis .k { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  .kpis .v { font-size: 1.25rem; font-weight: 750; }
+  .chartwrap { position: relative; margin-top: 10px; }
+  .chartwrap svg { display: block; width: 100%; height: auto; }
+  .tip { position: absolute; pointer-events: none; background: var(--deep); color: var(--hero-ink); font-size: .78rem; padding: 7px 9px; border-radius: 8px; white-space: nowrap; transform: translate(-50%, -110%); }
+  .tablescroll { overflow-x: auto; margin-top: 14px; }
+  table.hist { border-collapse: collapse; width: 100%; min-width: 600px; font-size: .86rem; }
+  .hist th, .hist td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: right; }
+  .hist th { font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .hist th:first-child, .hist td:first-child { text-align: left; }
+  .hist td.dist { width: 200px; }
+  .bar { display: flex; height: 12px; gap: 2px; }
+  .bar i { display: block; height: 100%; border-radius: 2px; }
+  .legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: .76rem; color: var(--muted); margin-top: 8px; }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+
+  .toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--deep); color: var(--hero-ink); padding: 10px 16px; border-radius: 10px; font-size: .88rem; z-index: 60; max-width: calc(100% - 32px); }
+
+  footer { background: var(--deep); color: var(--hero-ink); font-size: .82rem; }
+  footer .wrap { padding-block: 18px; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; opacity: .85; }
+
+  @media (max-width: 900px) {
+    .hero .wrap, .grid2 { grid-template-columns: minmax(0, 1fr); }
+    .how ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 680px) {
+    table.surveys thead { display: none; }
+    table.surveys, .surveys tbody, .surveys tr, .surveys td { display: block; width: 100%; }
+    .surveys tr { border-bottom: 1px solid var(--line); padding: 4px 0 10px; }
+    .surveys tr:last-child { border-bottom: 0; }
+    .surveys td { border: 0; padding: 10px 16px; }
+    .surveys td[data-h]::before { content: attr(data-h); display: block; font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 6px; }
+    .row2 { grid-template-columns: 1fr; }
+    .how ol { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="topbar"><div class="wrap"><span>Ocean Two Resident Community</span><span id="tzline">Weeks run Monday to Sunday, Eastern Time</span></div></div>
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="../index.html"><b>OCEAN TWO</b><span>Residential Hub</span></a>
+    <nav class="links" aria-label="Site">
+      <a href="../index.html">Home</a>
+      <a href="../documents/index.html">Documents</a>
+      <a href="../finances/index.html">Finances</a>
+      <a href="../elections/registration.html">Elections</a>
+      <a href="../chat/comments.html">Chat</a>
+      <a href="./index.html" aria-current="page">Surveys</a>
+    </nav>
+    <div class="account" id="account"></div>
+  </div>
+</header>
+
+<div class="demo" id="demoBar" hidden>
+  <div class="wrap">
+    <strong>Demo</strong>
+    <span>Sample data, kept only in this page.</span>
+    <span>View as</span>
+    <div class="seg" role="group" aria-label="Demo viewer">
+      <button type="button" id="roleResident" data-role="resident" aria-pressed="true">Resident</button>
+      <button type="button" id="roleBoard" data-role="board" aria-pressed="false">Board member</button>
+      <button type="button" id="roleOut" data-role="out" aria-pressed="false">Signed out</button>
+    </div>
+    <button type="button" class="btn small" id="advanceBtn">Skip to next Monday</button>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Resident surveys</p>
+      <h1>How are our projects working out?</h1>
+      <p>Rate completed, ongoing and proposed projects on a 1 to 5 scale. Every registered resident gets one vote per survey each week. On Monday your vote resets, and last week's community average is posted.</p>
+    </div>
+    <div class="weekcard" aria-live="polite">
+      <span class="lbl">Voting week</span>
+      <span class="big num" id="weekRange">…</span>
+      <span class="sub" id="weekSub">Loading surveys…</span>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+  <section aria-labelledby="openH">
+    <div class="sectionhead">
+      <div>
+        <h2 id="openH">Open surveys</h2>
+        <p class="hint" id="publishHint">A weekly average is posted once at least 3 residents have voted that week.</p>
+      </div>
+      <div class="filters">
+        <div class="seg" role="group" aria-label="Project status">
+          <button type="button" id="fAll" data-f="all" aria-pressed="true">All</button>
+          <button type="button" id="fCompleted" data-f="completed" aria-pressed="false">Completed</button>
+          <button type="button" id="fOngoing" data-f="ongoing" aria-pressed="false">Ongoing</button>
+          <button type="button" id="fProposed" data-f="proposed" aria-pressed="false">Proposed</button>
+        </div>
+        <label class="check"><input type="checkbox" id="showEnded"> Show ended surveys</label>
+      </div>
+    </div>
+    <div class="ledger">
+      <table class="surveys">
+        <thead><tr><th>Question to vote</th><th>Your estimation (1–5)</th><th>Total average</th></tr></thead>
+        <tbody id="rows"><tr><td colspan="3" class="empty">Loading surveys…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="boardSec" aria-labelledby="boardH" hidden>
+    <div class="sectionhead">
+      <div>
+        <h2 id="boardH">Board of Directors</h2>
+        <p class="hint">Only Board members see this section. Residents never see who voted or how.</p>
+      </div>
+      <span class="badge">Board access</span>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <h3>Start a survey</h3>
+        <p class="hint">Ask one question that residents can answer on a 1 to 5 scale.</p>
+        <form class="new" id="newForm" novalidate>
+          <label class="f" for="nQuestion">Question
+            <textarea id="nQuestion" maxlength="500" required placeholder="How satisfied are you with the renovated pool deck?"></textarea>
+          </label>
+          <div class="row2">
+            <label class="f" for="nProject">Project <span class="opt">(optional)</span>
+              <input type="text" id="nProject" maxlength="200" placeholder="Pool deck renovation">
+            </label>
+            <label class="f" for="nStart">Start date
+              <input type="date" id="nStart">
+            </label>
+          </div>
+          <fieldset>
+            <legend>Project status</legend>
+            <div class="radios">
+              <label><input type="radio" name="nStatus" id="nsCompleted" value="completed" checked> Completed</label>
+              <label><input type="radio" name="nStatus" id="nsOngoing" value="ongoing"> Ongoing</label>
+              <label><input type="radio" name="nStatus" id="nsProposed" value="proposed"> Proposed</label>
+            </div>
+          </fieldset>
+          <div class="row2">
+            <label class="f" for="nInterval">Voting period
+              <select id="nInterval">
+                <option value="7" selected>Weekly (Monday to Sunday)</option>
+                <option value="14">Every 2 weeks</option>
+                <option value="28">Every 4 weeks</option>
+              </select>
+            </label>
+            <label class="f" for="nElig">Who votes
+              <select id="nElig">
+                <option value="member" selected>One vote per resident account</option>
+                <option value="unit">One vote per unit</option>
+              </select>
+            </label>
+          </div>
+          <fieldset>
+            <legend>Duration</legend>
+            <div class="durrow">
+              <label><input type="radio" name="nDur" id="ndIndef" value="indef" checked> Indefinite. Runs until the Board closes it.</label>
+              <label><input type="radio" name="nDur" id="ndFixed" value="fixed"> Ends on <input type="date" id="nEnd" aria-label="End date"></label>
+            </div>
+          </fieldset>
+          <div class="formstatus" id="formStatus" role="status"></div>
+          <div><button class="btn primary" type="submit" id="launchBtn">Launch survey</button></div>
+        </form>
+      </div>
+      <div class="panel">
+        <h3>Manage surveys</h3>
+        <p class="hint">Change the end date, make a survey open-ended, or close it. Closing keeps every weekly result.</p>
+        <div class="manage" id="manage"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how" aria-labelledby="howH">
+    <div class="sectionhead"><h2 id="howH">How the weekly survey works</h2></div>
+    <ol>
+      <li><b>The Board asks</b>A Board member posts a question about a project and sets an end date, or leaves it open-ended.</li>
+      <li><b>You vote once a week</b>Pick a score from 1 to 5. It is locked for the rest of the week, Monday to Sunday.</li>
+      <li><b>Monday rollover</b>The week's votes are combined into one weekly record with its start date. Individual votes are then deleted.</li>
+      <li><b>Everyone sees the trend</b>"Total average" shows last week's result. Open History for every past week.</li>
+    </ol>
+  </section>
+</main>
+
+<footer><div class="wrap"><span>© <span id="year"></span> Ocean Two Resident Community</span><span>Resident surveys</span></div></footer>
+
+<div class="modal" id="histModal" hidden role="dialog" aria-modal="true" aria-labelledby="histTitle">
+  <div class="box">
+    <div class="head">
+      <div><span id="histChip"></span><h3 id="histTitle"></h3><div class="meta" id="histMeta"></div></div>
+      <button class="btn small" type="button" id="histClose">Close</button>
+    </div>
+    <div class="kpis" id="histKpis"></div>
+    <div class="chartwrap" id="histChart"></div>
+    <div class="legend" id="distLegend"></div>
+    <div class="tablescroll"><table class="hist"><thead><tr><th>Week starting</th><th>Votes</th><th>Average</th><th>95% range</th><th>Rated 4–5</th><th>Distribution 1→5</th></tr></thead><tbody id="histRows"></tbody></table></div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+
+  /* ---------------------------------------------------------- dates (YYYY-MM-DD, calendar arithmetic) */
+  var D = {
+    parse: function (s) { var p = s.split("-"); return Date.UTC(+p[0], +p[1] - 1, +p[2]); },
+    fmt: function (t) { return new Date(t).toISOString().slice(0, 10); },
+    add: function (s, n) { return D.fmt(D.parse(s) + n * 864e5); },
+    diff: function (a, b) { return Math.round((D.parse(a) - D.parse(b)) / 864e5); },
+    monday: function (s) { var wd = (new Date(D.parse(s)).getUTCDay() + 6) % 7; return D.add(s, -wd); },
+    nice: function (s, withYear) { return new Date(D.parse(s)).toLocaleDateString("en-US", { timeZone: "UTC", month: "short", day: "numeric", year: withYear ? "numeric" : undefined }); },
+    weekday: function (s) { return new Date(D.parse(s)).toLocaleDateString("en-US", { timeZone: "UTC", weekday: "long", month: "long", day: "numeric" }); },
+    todayNY: function () {
+      var parts = new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+      return parts.slice(0, 10);
+    }
+  };
+
+  /* ---------------------------------------------------------- demo server (mirrors backend/surveys.py) */
+  function makeDemo() {
+    var PUBLISH_MIN = 3;
+    var today = D.todayNY();
+    var seed = 20261104;
+    function rnd() { seed = (seed + 0x6D2B79F5) | 0; var t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }
+    function drawScore(w) { var r = rnd() * w.reduce(function (a, b) { return a + b; }, 0); for (var i = 0; i < 5; i++) { r -= w[i]; if (r <= 0) return i + 1; } return 5; }
+
+    var db = { surveys: [], ballots: [], weeks: [], nextId: 1 };
+    var users = {
+      resident: { id: "r-1204", unit_number: "1204", full_name: "Resident, Unit 1204", role: "resident" },
+      board: { id: "b-0805", unit_number: "805", full_name: "Director, Unit 805", role: "board" },
+      out: null
+    };
+    var role = "resident";
+
+    function anchor(s) { return s.interval_days === 7 ? D.monday(s.starts_on) : s.starts_on; }
+    function pstart(s, d) { var a = anchor(s), k = Math.floor(D.diff(d, a) / s.interval_days); return D.add(a, k * s.interval_days); }
+    function finalDay(s) { var c = [s.ends_on, s.closed_on].filter(Boolean).sort(); return c.length ? c[0] : null; }
+    function isOpen(s, d) { var e = finalDay(s); return s.status === "active" && s.starts_on <= d && (!e || d <= e); }
+    function key(s, u) { return s.eligibility === "unit" ? "unit:" + u.unit_number : "member:" + u.id; }
+    function stats(n, sum, sq) {
+      if (!n) return { mean: null, std: null, lo: null, hi: null };
+      var m = sum / n; if (n === 1) return { mean: m, std: null, lo: null, hi: null };
+      var sd = Math.sqrt(Math.max(0, (sq - sum * sum / n) / (n - 1))), h = t975(n - 1) * sd / Math.sqrt(n);
+      return { mean: m, std: sd, lo: Math.max(1, m - h), hi: Math.min(5, m + h) };
+    }
+    function t975(df) { var T = [[1,12.706],[2,4.303],[3,3.182],[4,2.776],[5,2.571],[6,2.447],[7,2.365],[8,2.306],[9,2.262],[10,2.228],[12,2.179],[15,2.131],[20,2.086],[30,2.042],[60,2.0],[120,1.98]]; for (var i = 0; i < T.length; i++) if (df <= T[i][0]) return T[i][1]; return 1.96; }
+    function weekRow(s, p, end, c) {
+      var n = c.reduce(function (a, b) { return a + b; }, 0), sum = 0, sq = 0;
+      c.forEach(function (v, i) { sum += (i + 1) * v; sq += (i + 1) * (i + 1) * v; });
+      return { survey_id: s.id, period_start: p, period_end: end, n: n, sum: sum, sq: sq, c: c.slice() };
+    }
+    function rollover(s) {
+      if (today < s.starts_on) return;
+      var L = s.interval_days, e = finalDay(s);
+      var boundary = (e && today > e) ? D.add(pstart(s, e), L) : pstart(s, today);
+      var p = s.last_aggregated_start ? D.add(s.last_aggregated_start, L) : anchor(s);
+      while (p < boundary) {
+        var c = [0, 0, 0, 0, 0];
+        db.ballots = db.ballots.filter(function (b) { if (b.survey_id === s.id && b.period_start === p) { c[b.score - 1]++; return false; } return true; });
+        var last = D.add(p, L - 1); if (e && e < last) last = e;
+        db.weeks.push(weekRow(s, p, last, c));
+        s.last_aggregated_start = p; p = D.add(p, L);
+      }
+    }
+    function pub(w) {
+      var hidden = w.n < PUBLISH_MIN, st = stats(w.n, w.sum, w.sq);
+      return { period_start: w.period_start, period_end: w.period_end, n: w.n, suppressed: hidden && w.n > 0,
+        mean: hidden ? null : st.mean, std: hidden ? null : st.std, ci_low: hidden ? null : st.lo, ci_high: hidden ? null : st.hi,
+        distribution: hidden ? null : w.c.slice(), share_satisfied: hidden ? null : (w.c[3] + w.c[4]) / w.n };
+    }
+    function ser(s) {
+      var u = users[role], open = isOpen(s, today), cur = today >= s.starts_on ? pstart(s, today) : null;
+      var curEnd = cur ? D.add(cur, s.interval_days - 1) : null; if (curEnd && finalDay(s) && finalDay(s) < curEnd) curEnd = finalDay(s);
+      var mine = null;
+      if (u && open && cur) { var k = key(s, u); db.ballots.forEach(function (b) { if (b.survey_id === s.id && b.period_start === cur && b.voter === k) mine = b.score; }); }
+      var rows = db.weeks.filter(function (w) { return w.survey_id === s.id; }).sort(function (a, b) { return a.period_start < b.period_start ? -1 : 1; });
+      var weeks = rows.map(pub), last = weeks.length ? weeks[weeks.length - 1] : null;
+      var published = weeks.filter(function (w) { return w.mean != null; });
+      var trend = (published.length >= 2 && last && last.mean != null) ? published[published.length - 1].mean - published[published.length - 2].mean : null;
+      var tn = 0, ts = 0; rows.forEach(function (r) { tn += r.n; ts += r.sum; });
+      var status = s.status === "closed" ? "closed" : (open || today < s.starts_on ? s.status : "ended");
+      return { id: s.id, question: s.question, project_name: s.project_name, project_status: s.project_status, description: s.description,
+        interval_days: s.interval_days, eligibility: s.eligibility, starts_on: s.starts_on, ends_on: s.ends_on, open_ended: !s.ends_on,
+        status: status, accepting_votes: open, current_period_start: cur, current_period_end: curEnd, my_score: mine,
+        last_period: last, trend: trend, overall_mean: tn >= PUBLISH_MIN ? ts / tn : null, overall_n: tn,
+        sparkline: weeks.slice(-12).map(function (w) { return w.mean; }) };
+    }
+    function err(status, msg) { var e = new Error(msg); e.status = status; return Promise.reject(e); }
+    function viewer() { var u = users[role]; return { signed_in: !!u, is_board: !!(u && u.role === "board"), name: u && u.full_name, unit: u && u.unit_number }; }
+    function find(id) { for (var i = 0; i < db.surveys.length; i++) if (db.surveys[i].id === id) return db.surveys[i]; return null; }
+
+    // ---- seed: the three questions from the example sheet plus one proposal and one ended survey
+    var thisMon = D.monday(today), lastMon = D.add(thisMon, -7);
+    function addSurvey(o) { var s = Object.assign({ id: db.nextId++, interval_days: 7, eligibility: "member", status: "active", ends_on: null, closed_on: null, last_aggregated_start: null, description: null }, o); db.surveys.push(s); return s; }
+    function seedHistory(s, weights, lastDist, weeksBack) {
+      for (var k = weeksBack; k >= 1; k--) {
+        var p = D.add(thisMon, -7 * k), c = [0, 0, 0, 0, 0];
+        if (k === 1 && lastDist) c = lastDist.slice();
+        else { var n = 5 + Math.floor(rnd() * 9); for (var i = 0; i < n; i++) c[drawScore(weights) - 1]++; }
+        db.weeks.push(weekRow(s, p, D.add(p, 6), c));
+      }
+      s.last_aggregated_start = lastMon;
+    }
+    function seedBallots(s, n, weights) { for (var i = 0; i < n; i++) db.ballots.push({ survey_id: s.id, period_start: thisMon, voter: "member:neighbor-" + s.id + "-" + i + "-" + thisMon, score: drawScore(weights) }); }
+
+    var gym = addSurvey({ question: "What is your satisfaction with our new equipment in the gym room?", project_name: "Gym equipment upgrade", project_status: "completed", starts_on: D.add(thisMon, -63) });
+    seedHistory(gym, [0, 1, 2, 5, 9], [0, 0, 1, 2, 7], 9); seedBallots(gym, 4, [0, 1, 2, 5, 9]);
+    db.ballots.push({ survey_id: gym.id, period_start: thisMon, voter: "member:r-1204", score: 4 });
+    var tennis = addSurvey({ question: "What is your satisfaction with our tennis court renovation?", project_name: "Tennis court renovation", project_status: "ongoing", starts_on: D.add(thisMon, -49) });
+    seedHistory(tennis, [2, 3, 4, 4, 2], [1, 1, 3, 3, 2], 7); seedBallots(tennis, 3, [2, 3, 4, 4, 2]);
+    var gm = addSurvey({ question: "What is your satisfaction with our new General Manager?", project_name: "General Manager hire", project_status: "completed", starts_on: D.add(thisMon, -56), eligibility: "unit" });
+    seedHistory(gm, [0, 0, 1, 3, 8], [0, 0, 0, 2, 8], 8); seedBallots(gm, 5, [0, 0, 1, 3, 8]);
+    var deck = addSurvey({ question: "How strongly do you support replacing the pool deck furniture next spring?", project_name: "Pool deck furniture", project_status: "proposed", starts_on: D.add(thisMon, -14), ends_on: D.add(thisMon, 27) });
+    seedHistory(deck, [2, 2, 3, 5, 4], null, 2); seedBallots(deck, 2, [2, 2, 3, 5, 4]);
+    var lobby = addSurvey({ question: "What is your satisfaction with the new lobby lighting?", project_name: "Lobby lighting", project_status: "completed", starts_on: D.add(thisMon, -63), ends_on: D.add(thisMon, -22) });
+    seedHistory(lobby, [1, 1, 2, 6, 5], null, 6); lobby.last_aggregated_start = null;
+    db.weeks = db.weeks.filter(function (w) { return w.survey_id !== lobby.id || w.period_start <= D.add(thisMon, -28); });
+    lobby.last_aggregated_start = D.add(thisMon, -28);
+
+    var api = {
+      demo: true,
+      setRole: function (r) { role = r; },
+      advance: function () {
+        db.surveys.forEach(function (s) {
+          if (!isOpen(s, today)) return;
+          var cur = pstart(s, today), w = s.project_status === "proposed" ? [2, 2, 3, 5, 4] : s === tennis ? [1, 2, 4, 5, 3] : [0, 1, 1, 4, 8];
+          var n = 4 + Math.floor(rnd() * 7);
+          for (var i = 0; i < n; i++) db.ballots.push({ survey_id: s.id, period_start: cur, voter: "member:neighbor-x" + i + "-" + cur, score: drawScore(w) });
+        });
+        today = D.add(D.monday(today), 7);
+      },
+      request: function (method, path, body) {
+        db.surveys.forEach(rollover);
+        var u = users[role], m;
+        if (method === "GET" && /^\/surveys(\?|$)/.test(path)) {
+          var all = /include_closed=true/.test(path);
+          var items = db.surveys.slice().sort(function (a, b) { return a.starts_on < b.starts_on ? 1 : -1; }).map(ser).filter(function (x) { return all || (x.status !== "closed" && x.status !== "ended"); });
+          return Promise.resolve({ today: today, viewer: viewer(), publish_min: PUBLISH_MIN, surveys: items });
+        }
+        if (method === "GET" && (m = path.match(/^\/surveys\/(\d+)\/history$/))) {
+          var s = find(+m[1]); if (!s) return err(404, "Survey not found.");
+          var live = null;
+          if (u && u.role === "board" && isOpen(s, today)) { var cp = pstart(s, today); live = db.ballots.filter(function (b) { return b.survey_id === s.id && b.period_start === cp; }).length; }
+          var rows = db.weeks.filter(function (w) { return w.survey_id === s.id; }).sort(function (a, b) { return a.period_start < b.period_start ? -1 : 1; }).map(pub);
+          return Promise.resolve({ survey: ser(s), weeks: rows, current_ballots: live });
+        }
+        if (method === "POST" && (m = path.match(/^\/surveys\/(\d+)\/vote$/))) {
+          if (!u) return err(401, "Please sign in as a registered resident.");
+          var sv = find(+m[1]); if (!sv) return err(404, "Survey not found.");
+          if (!isOpen(sv, today)) return err(409, "This survey is not accepting votes right now.");
+          var cur = pstart(sv, today), k = key(sv, u);
+          if (db.ballots.some(function (b) { return b.survey_id === sv.id && b.period_start === cur && b.voter === k; }))
+            return err(409, (sv.eligibility === "unit" ? "Your unit has" : "You have") + " already voted this week. Voting reopens on " + D.weekday(D.add(cur, sv.interval_days)) + ".");
+          db.ballots.push({ survey_id: sv.id, period_start: cur, voter: k, score: body.score });
+          return Promise.resolve(ser(sv));
+        }
+        if (method === "POST" && path === "/surveys") {
+          if (!u) return err(401, "Please sign in."); if (u.role !== "board") return err(403, "Only members of the Board of Directors can do this.");
+          var st = body.starts_on || today;
+          if (body.ends_on && body.ends_on < st) return err(422, "The end date must be on or after the start date.");
+          var ns = addSurvey({ question: body.question, project_name: body.project_name || null, project_status: body.project_status, interval_days: body.interval_days, eligibility: body.eligibility, starts_on: st, ends_on: body.ends_on || null });
+          return Promise.resolve(ser(ns));
+        }
+        if (method === "PATCH" && (m = path.match(/^\/surveys\/(\d+)$/))) {
+          if (!u || u.role !== "board") return err(403, "Only members of the Board of Directors can do this.");
+          var ps = find(+m[1]); if (!ps) return err(404, "Survey not found.");
+          if (body.open_ended) ps.ends_on = null;
+          else if (body.ends_on) { if (body.ends_on < (ps.starts_on > today ? ps.starts_on : today)) return err(422, "The new end date cannot be in the past."); ps.ends_on = body.ends_on; }
+          if (body.action === "close") { ps.status = "closed"; ps.closed_on = today; }
+          return Promise.resolve(ser(ps));
+        }
+        return err(404, "Not found");
+      }
+    };
+    return api;
+  }
+
+  /* ---------------------------------------------------------- live API (Member Access service) */
+  var DEMO = !window.MemberAccess;
+  var demo = DEMO ? makeDemo() : null;
+  var API_BASE = "";
+  if (!DEMO) {
+    var accessScript = document.querySelector('script[src*="access.js"]');
+    API_BASE = window.SURVEYS_API_BASE || new URL(accessScript.src, location.href).origin;
+  }
+  function api(path, method, body) {
+    method = method || "GET";
+    if (DEMO) return demo.request(method, path, body ? JSON.parse(JSON.stringify(body)) : undefined);
+    var headers = { "Content-Type": "application/json" };
+    var token = window.MemberAccess && MemberAccess.token();
+    if (token) headers.Authorization = "Bearer " + token;
+    return fetch(API_BASE + path, { method: method, headers: headers, body: body ? JSON.stringify(body) : undefined }).then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (data) {
+        if (!res.ok) {
+          var d = data.detail; if (Array.isArray(d)) d = "Please check that every field is filled in correctly.";
+          var e = new Error(typeof d === "string" ? d : "Error " + res.status); e.status = res.status; throw e;
+        }
+        return data;
+      });
+    });
+  }
+
+  /* ---------------------------------------------------------- state & rendering */
+  var state = { data: null, filter: "all", showEnded: false, closeArm: null, editEnd: null };
+  var SCALES = {
+    satisfaction: ["Very dissatisfied", "Dissatisfied", "Neutral", "Satisfied", "Very satisfied"],
+    support: ["Strongly oppose", "Oppose", "Neutral", "Support", "Strongly support"]
+  };
+  function scaleFor(s) { return s.project_status === "proposed" ? SCALES.support : SCALES.satisfaction; }
+  function f1(x) { return x == null ? "—" : x.toFixed(1); }
+  function f2(x) { return x == null ? "—" : x.toFixed(2); }
+  function intervalText(n) { return n === 7 ? "Weekly" : n === 14 ? "Every 2 weeks" : n === 28 ? "Every 4 weeks" : "Every " + n + " days"; }
+  function statusChip(s) {
+    var st = (s.status === "closed" || s.status === "ended") ? "ended" : s.project_status;
+    var label = st === "ended" ? (s.status === "closed" ? "Closed" : "Ended") : s.project_status;
+    return '<span class="chip ' + st + '">' + esc(label) + "</span>";
+  }
+
+  function toast(msg) { var t = $("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(function () { t.hidden = true; }, 3600); }
+
+  function spark(vals) {
+    var pts = vals.map(function (v, i) { return { v: v, i: i }; }).filter(function (p) { return p.v != null; });
+    if (pts.length < 2) return "";
+    var W = 92, H = 30, n = vals.length;
+    var x = function (i) { return 3 + i * (W - 6) / Math.max(1, n - 1); }, y = function (v) { return 3 + (5 - v) * (H - 6) / 4; };
+    var d = pts.map(function (p, k) { return (k ? "L" : "M") + x(p.i).toFixed(1) + " " + y(p.v).toFixed(1); }).join(" ");
+    var last = pts[pts.length - 1];
+    return '<svg class="spark" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + " " + H + '" aria-hidden="true"><line x1="0" x2="' + W + '" y1="' + y(3) + '" y2="' + y(3) + '" stroke="var(--line)" stroke-width="1"/><path d="' + d + '" fill="none" stroke="var(--sea)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="' + x(last.i) + '" cy="' + y(last.v) + '" r="3.5" fill="var(--sea)" stroke="var(--panel)" stroke-width="2"/></svg>';
+  }
+
+  function renderHeader() {
+    var d = state.data, v = d.viewer, acc = $("account");
+    var open = d.surveys.filter(function (s) { return s.accepting_votes; });
+    var ref = open[0];
+    var mon = D.monday(d.today), sun = D.add(mon, 6);
+    $("weekRange").textContent = D.nice(mon) + " – " + D.nice(sun, true);
+    var voted = open.filter(function (s) { return s.my_score != null; }).length;
+    $("weekSub").textContent = v.signed_in
+      ? "You have rated " + voted + " of " + open.length + " open survey" + (open.length === 1 ? "" : "s") + " this week. Votes reset " + D.weekday(D.add(mon, 7)) + "."
+      : "Sign in to vote. Votes reset " + D.weekday(D.add(mon, 7)) + ".";
+    $("publishHint").textContent = "A weekly average is posted once at least " + d.publish_min + " residents have voted that week.";
+    if (DEMO) {
+      acc.innerHTML = v.signed_in ? '<span class="who">' + esc(v.name) + "</span>" + (v.is_board ? '<span class="badge">Board</span>' : "") : '<span class="who">Not signed in</span>';
+    } else {
+      acc.innerHTML = v.signed_in
+        ? '<span class="who">' + esc(v.name || "Signed in") + (v.unit ? " · Unit " + esc(v.unit) : "") + "</span>" + (v.is_board ? '<span class="badge">Board</span>' : "") + '<button class="btn small" type="button" id="signOut">Sign out</button>'
+        : '<button class="btn primary small" type="button" id="signIn">Sign in to vote</button>';
+      if ($("signIn")) $("signIn").onclick = function () { MemberAccess.open("login"); };
+      if ($("signOut")) $("signOut").onclick = function () { if (MemberAccess.logout) MemberAccess.logout(); else MemberAccess.open(); };
+    }
+    $("boardSec").hidden = !v.is_board;
+  }
+
+  function rowHtml(s) {
+    var v = state.data.viewer, labels = scaleFor(s);
+    var meta = [intervalText(s.interval_days), s.open_ended ? "Open-ended" : (s.status === "ended" || s.status === "closed" ? "Ended " : "Until ") + D.nice(s.ends_on, true)];
+    if (s.eligibility === "unit") meta.push("One vote per unit");
+    meta.push("Since " + D.nice(s.starts_on, true));
+    var q = '<td data-h="Question">' + statusChip(s) + (s.project_name ? '<span class="proj">' + esc(s.project_name) + "</span>" : "") +
+      '<div class="q">' + esc(s.question) + '</div><div class="meta">' + meta.map(function (m) { return "<span>" + esc(m) + "</span>"; }).join("") +
+      '<button class="linkbtn" type="button" data-hist="' + s.id + '">History</button></div></td>';
+
+    var canVote = s.accepting_votes && v.signed_in && s.my_score == null;
+    var btns = "";
+    for (var i = 1; i <= 5; i++) {
+      btns += '<button type="button" data-vote="' + s.id + '" data-score="' + i + '" title="' + i + " · " + esc(labels[i - 1]) + '" aria-label="' + i + ", " + esc(labels[i - 1]) + '"' +
+        (s.my_score === i ? ' class="mine" aria-pressed="true"' : "") + (canVote ? "" : " disabled") + ">" + i + "</button>";
+    }
+    var note;
+    if (!s.accepting_votes) note = '<div class="note">Voting is closed for this survey.</div>';
+    else if (!v.signed_in) note = '<div class="note">Sign in as a registered resident to vote.</div>';
+    else if (s.my_score != null) note = '<div class="note ok">Recorded for this week. Vote again ' + esc(D.weekday(D.add(s.current_period_end, 1))) + ".</div>";
+    else note = '<div class="note">One vote this week, ' + esc(D.nice(s.current_period_start)) + "–" + esc(D.nice(s.current_period_end)) + ".</div>";
+    var est = '<td data-h="Your estimation (1–5)"><div class="rate" role="group" aria-label="Your estimation">' + btns + '</div><div class="scale"><span>' + esc(labels[0]) + "</span><span>" + esc(labels[4]) + "</span></div>" + note + "</td>";
+
+    var lp = s.last_period, val, info;
+    if (lp && lp.mean != null) {
+      val = '<div class="val num">' + f1(lp.mean) + "<small>/5</small></div>";
+      info = "Week of " + D.nice(lp.period_start) + " · " + lp.n + " vote" + (lp.n === 1 ? "" : "s");
+    } else {
+      val = '<div class="val none">—</div>';
+      info = !lp ? "First result posts after this week ends." : lp.n === 0 ? "No votes in the week of " + D.nice(lp.period_start) + "." : "Fewer than " + state.data.publish_min + " votes in the week of " + D.nice(lp.period_start) + ".";
+    }
+    var tr = "";
+    if (s.trend != null) {
+      var cls = s.trend > 0.05 ? "up" : s.trend < -0.05 ? "down" : "flat";
+      tr = ' <span class="trend ' + cls + '">' + (cls === "up" ? "▲ " : cls === "down" ? "▼ " : "■ ") + Math.abs(s.trend).toFixed(1) + " vs prior week</span>";
+    }
+    var all = s.overall_mean != null ? "<br>All weeks: " + f2(s.overall_mean) + " from " + s.overall_n + " votes" : "";
+    var avg = '<td data-h="Total average"><div class="avg">' + val + spark(s.sparkline) + '<div class="info">' + esc(info) + tr + all + "</div></div></td>";
+    return "<tr>" + q + est + avg + "</tr>";
+  }
+
+  function renderRows() {
+    var list = state.data.surveys.filter(function (s) { return state.filter === "all" || s.project_status === state.filter; });
+    $("rows").innerHTML = list.length ? list.map(rowHtml).join("") :
+      '<tr><td colspan="3" class="empty">' + (state.data.surveys.length ? "No surveys match this filter." : "There are no open surveys right now. Board members can start one below.") + "</td></tr>";
+  }
+
+  function renderManage() {
+    if (!state.data.viewer.is_board) return;
+    api("/surveys?include_closed=true").then(function (d) {
+      $("manage").innerHTML = d.surveys.map(function (s) {
+        var live = s.status !== "closed" && s.status !== "ended";
+        var when = s.open_ended ? "Open-ended" : (live ? "Ends " : "Ended ") + D.nice(s.ends_on, true);
+        var acts = "";
+        if (live) {
+          if (state.editEnd === s.id) {
+            acts += '<input type="date" id="endEdit' + s.id + '" min="' + d.today + '" value="' + (s.ends_on || D.add(d.today, 28)) + '" aria-label="New end date"><button class="btn small primary" type="button" data-saveend="' + s.id + '">Save end date</button><button class="btn small" type="button" data-cancelend="1">Cancel</button>';
+          } else {
+            acts += '<button class="btn small" type="button" data-editend="' + s.id + '">' + (s.open_ended ? "Set end date" : "Change end date") + "</button>";
+            if (!s.open_ended) acts += '<button class="btn small" type="button" data-openended="' + s.id + '">Make open-ended</button>';
+            acts += state.closeArm === s.id
+              ? '<button class="btn small danger" type="button" data-close="' + s.id + '">Confirm: close today</button><button class="btn small" type="button" data-cancelclose="1">Keep open</button>'
+              : '<button class="btn small danger" type="button" data-arm="' + s.id + '">Close survey</button>';
+          }
+        }
+        acts += '<button class="linkbtn" type="button" data-hist="' + s.id + '">Results</button>';
+        return '<div class="mitem"><div>' + statusChip(s) + '</div><div class="t">' + esc(s.question) + '</div><div class="meta"><span>' + intervalText(s.interval_days) + "</span><span>" + esc(when) + "</span><span>" + s.overall_n + " votes recorded</span></div><div class=\"acts\">" + acts + "</div></div>";
+      }).join("") || '<p class="hint">No surveys yet.</p>';
+    });
+  }
+
+  function load() {
+    return api("/surveys" + (state.showEnded ? "?include_closed=true" : "")).then(function (d) {
+      state.data = d; renderHeader(); renderRows(); renderManage();
+    }).catch(function (e) {
+      $("rows").innerHTML = '<tr><td colspan="3" class="empty">Surveys could not be loaded (' + esc(e.message) + "). Check your connection and reload the page.</td></tr>";
+    });
+  }
+
+  /* ---------------------------------------------------------- history modal */
+  var DCOL = ["var(--d1)", "var(--d2)", "var(--d3)", "var(--d4)", "var(--d5)"];
+  function openHistory(id) {
+    api("/surveys/" + id + "/history").then(function (h) {
+      var s = h.survey, labels = scaleFor(s);
+      $("histChip").innerHTML = statusChip(s) + (s.project_name ? '<span class="proj">' + esc(s.project_name) + "</span>" : "");
+      $("histTitle").textContent = s.question;
+      $("histMeta").innerHTML = "<span>" + intervalText(s.interval_days) + "</span><span>" + (s.open_ended ? "Open-ended" : "End " + D.nice(s.ends_on, true)) + "</span><span>" + h.weeks.length + " weekly records</span>";
+      var pubw = h.weeks.filter(function (w) { return w.mean != null; });
+      var best = pubw.reduce(function (a, w) { return !a || w.mean > a.mean ? w : a; }, null);
+      var k = [
+        ["Last week", s.last_period && s.last_period.mean != null ? f2(s.last_period.mean) : "—"],
+        ["All weeks", f2(s.overall_mean)],
+        ["Votes recorded", String(s.overall_n)],
+        ["Best week", best ? f2(best.mean) + " · " + D.nice(best.period_start) : "—"]
+      ];
+      if (h.current_ballots != null) k.push(["Votes so far this week", String(h.current_ballots)]);
+      $("histKpis").innerHTML = k.map(function (x) { return '<div><span class="k">' + esc(x[0]) + '</span><span class="v num">' + esc(x[1]) + "</span></div>"; }).join("");
+      drawChart(h.weeks);
+      $("distLegend").innerHTML = labels.map(function (l, i) { return '<span><i style="background:' + DCOL[i] + '"></i>' + (i + 1) + " " + esc(l) + "</span>"; }).join("");
+      $("histRows").innerHTML = h.weeks.slice().reverse().map(function (w) {
+        var bar = w.distribution ? '<div class="bar" title="' + w.distribution.join(" / ") + '">' + w.distribution.map(function (c, i) { return c ? '<i style="flex:' + c + ";background:" + DCOL[i] + '" title="' + (i + 1) + ": " + c + '"></i>' : ""; }).join("") + "</div>" : '<span class="hint">' + (w.n ? "Hidden (under " + state.data.publish_min + " votes)" : "No votes") + "</span>";
+        return '<tr><td>' + D.nice(w.period_start, true) + (w.period_end !== D.add(w.period_start, s.interval_days - 1) ? " (to " + D.nice(w.period_end) + ")" : "") + '</td><td class="num">' + w.n + '</td><td class="num">' + f2(w.mean) + '</td><td class="num">' + (w.ci_low != null ? f2(w.ci_low) + "–" + f2(w.ci_high) : "—") + '</td><td class="num">' + (w.share_satisfied != null ? Math.round(w.share_satisfied * 100) + "%" : "—") + '</td><td class="dist">' + bar + "</td></tr>";
+      }).join("") || '<tr><td colspan="6" class="hint">No completed weeks yet. The first weekly record is written when this week ends.</td></tr>';
+      $("histModal").hidden = false; $("histClose").focus();
+    }).catch(function (e) { toast(e.message); });
+  }
+
+  function drawChart(weeks) {
+    var box = $("histChart");
+    if (weeks.filter(function (w) { return w.mean != null; }).length < 1) { box.innerHTML = ""; return; }
+    var W = 780, H = 230, L = 34, R = 30, T = 14, B = 30, n = weeks.length;
+    var x = function (i) { return L + (n === 1 ? (W - L - R) / 2 : i * (W - L - R) / (n - 1)); };
+    var y = function (v) { return T + (5 - v) * (H - T - B) / 4; };
+    var g = "";
+    for (var v = 1; v <= 5; v++) g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="var(--line)" stroke-width="1"/><text x="' + (L - 10) + '" y="' + (y(v) + 4) + '" text-anchor="end" font-size="11" fill="var(--muted)">' + v + "</text>";
+    var step = Math.ceil(n / 8);
+    weeks.forEach(function (w, i) { if (i % step === 0 || i === n - 1) g += '<text x="' + x(i) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="11" fill="var(--muted)">' + D.nice(w.period_start) + "</text>"; });
+    // 95% band and line, broken across weeks without a published mean
+    var segs = [], cur = [];
+    weeks.forEach(function (w, i) { if (w.mean != null) cur.push(i); else if (cur.length) { segs.push(cur); cur = []; } });
+    if (cur.length) segs.push(cur);
+    var band = "", line = "";
+    segs.forEach(function (sg) {
+      var withCi = sg.filter(function (i) { return weeks[i].ci_low != null; });
+      if (withCi.length > 1) band += '<path d="M' + withCi.map(function (i) { return x(i) + " " + y(weeks[i].ci_high); }).join(" L") + " L" + withCi.slice().reverse().map(function (i) { return x(i) + " " + y(weeks[i].ci_low); }).join(" L") + ' Z" fill="var(--aqua)" opacity=".8"/>';
+      if (sg.length > 1) line += '<path d="M' + sg.map(function (i) { return x(i) + " " + y(weeks[i].mean); }).join(" L") + '" fill="none" stroke="var(--sea)" stroke-width="2" stroke-linejoin="round"/>';
+    });
+    var dots = "", lastPub = -1;
+    weeks.forEach(function (w, i) { if (w.mean != null) lastPub = i; });
+    weeks.forEach(function (w, i) {
+      if (w.mean == null) return;
+      dots += '<circle cx="' + x(i) + '" cy="' + y(w.mean) + '" r="' + (i === lastPub ? 5.5 : 4) + '" fill="var(--sea)" stroke="var(--panel)" stroke-width="2"/>' +
+        '<rect data-i="' + i + '" x="' + (x(i) - 14) + '" y="' + T + '" width="28" height="' + (H - T - B) + '" fill="transparent"/>';
+    });
+    if (lastPub >= 0) dots += '<text x="' + Math.min(x(lastPub), W - R - 4) + '" y="' + (y(weeks[lastPub].mean) - 12) + '" text-anchor="end" font-size="12" font-weight="700" fill="var(--ink)">' + f2(weeks[lastPub].mean) + "</text>";
+    box.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Weekly average score, 1 to 5, with 95 percent range">' + g + band + line + dots + '</svg><div class="tip" id="tip" hidden></div>';
+    var svg = box.querySelector("svg"), tip = $("tip");
+    svg.addEventListener("mousemove", function (e) {
+      var r = e.target.closest ? e.target.closest("rect[data-i]") : null;
+      if (!r) { tip.hidden = true; return; }
+      var w = weeks[+r.getAttribute("data-i")], bb = svg.getBoundingClientRect(), sc = bb.width / W;
+      tip.innerHTML = "<b>Week of " + D.nice(w.period_start, true) + "</b><br>Average " + f2(w.mean) + " · " + w.n + " votes" + (w.ci_low != null ? "<br>95% range " + f2(w.ci_low) + "–" + f2(w.ci_high) : "");
+      tip.style.left = (x(+r.getAttribute("data-i")) * sc) + "px"; tip.style.top = (y(w.mean) * sc) + "px"; tip.hidden = false;
+    });
+    svg.addEventListener("mouseleave", function () { tip.hidden = true; });
+  }
+
+  /* ---------------------------------------------------------- events */
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("button"); if (!t) return;
+    var ds = t.dataset;
+    if (ds.vote) {
+      var sid = +ds.vote, score = +ds.score;
+      t.closest(".rate").querySelectorAll("button").forEach(function (b) { b.disabled = true; });
+      api("/surveys/" + sid + "/vote", "POST", { score: score }).then(function () { toast("Your " + score + " is recorded for this week."); return load(); })
+        .catch(function (err) { if (err.status === 401 && !DEMO) MemberAccess.open("login"); toast(err.message); load(); });
+    } else if (ds.hist) openHistory(+ds.hist);
+    else if (ds.f) {
+      state.filter = ds.f;
+      document.querySelectorAll("[data-f]").forEach(function (b) { b.setAttribute("aria-pressed", String(b === t)); });
+      renderRows();
+    } else if (ds.role && DEMO) {
+      demo.setRole(ds.role);
+      document.querySelectorAll("[data-role]").forEach(function (b) { b.setAttribute("aria-pressed", String(b === t)); });
+      load();
+    } else if (ds.arm) { state.closeArm = +ds.arm; renderManage(); }
+    else if (ds.cancelclose) { state.closeArm = null; renderManage(); }
+    else if (ds.close) { state.closeArm = null; patch(+ds.close, { action: "close" }, "Survey closed. Its weekly results are kept."); }
+    else if (ds.editend) { state.editEnd = +ds.editend; renderManage(); }
+    else if (ds.cancelend) { state.editEnd = null; renderManage(); }
+    else if (ds.saveend) { var v = $("endEdit" + ds.saveend).value; state.editEnd = null; if (v) patch(+ds.saveend, { ends_on: v }, "End date set to " + D.nice(v, true) + "."); }
+    else if (ds.openended) patch(+ds.openended, { open_ended: true }, "The survey is now open-ended.");
+  });
+  function patch(id, body, msg) { api("/surveys/" + id, "PATCH", body).then(function () { toast(msg); return load(); }).catch(function (e) { toast(e.message); }); }
+
+  $("histClose").onclick = function () { $("histModal").hidden = true; };
+  $("histModal").addEventListener("click", function (e) { if (e.target === $("histModal")) $("histModal").hidden = true; });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") $("histModal").hidden = true; });
+  $("showEnded").onchange = function () { state.showEnded = this.checked; load(); };
+  $("advanceBtn").onclick = function () { demo.advance(); load().then(function () { toast("It is now Monday, " + D.nice(state.data.today, true) + ". Last week's votes were combined into one weekly record each."); }); };
+
+  function syncDur() { $("nEnd").disabled = !$("ndFixed").checked; }
+  $("ndFixed").onchange = $("ndIndef").onchange = syncDur;
+  $("nEnd").addEventListener("focus", function () { $("ndFixed").checked = true; syncDur(); });
+  $("newForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var fs = $("formStatus"), q = $("nQuestion").value.trim();
+    if (q.length < 5) { fs.className = "formstatus err"; fs.textContent = "Write the question residents will answer (at least 5 characters)."; return; }
+    var fixed = $("ndFixed").checked, end = $("nEnd").value;
+    if (fixed && !end) { fs.className = "formstatus err"; fs.textContent = "Pick an end date, or choose Indefinite."; return; }
+    var body = {
+      question: q, project_name: $("nProject").value.trim() || null,
+      project_status: document.querySelector('input[name="nStatus"]:checked').value,
+      starts_on: $("nStart").value || null, ends_on: fixed ? end : null,
+      interval_days: +$("nInterval").value, eligibility: $("nElig").value
+    };
+    $("launchBtn").disabled = true;
+    api("/surveys", "POST", body).then(function (s) {
+      fs.className = "formstatus ok"; fs.textContent = "Survey launched. Residents can vote from " + D.nice(s.starts_on, true) + ".";
+      $("newForm").reset(); $("nStart").value = state.data.today; syncDur(); return load();
+    }).catch(function (err) { fs.className = "formstatus err"; fs.textContent = err.message; })
+      .then(function () { $("launchBtn").disabled = false; });
+  });
+
+  /* ---------------------------------------------------------- start */
+  $("year").textContent = new Date().getFullYear();
+  syncDur();
+  if (DEMO) {
+    $("demoBar").hidden = false;
+    $("nStart").value = D.todayNY();
+    load();
+  } else {
+    var started = false;
+    MemberAccess.ready.then(function () { started = true; return load(); }).then(function () { $("nStart").value = state.data.today; });
+    document.addEventListener("memberaccess:login", function () { if (started) load(); });
+    document.addEventListener("memberaccess:logout", function () { if (started) load(); });
+  }
+})();
+</script>
