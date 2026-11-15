@@ -625,7 +625,7 @@
     meta.push("Since " + D.nice(s.starts_on, true));
     var q = '<td data-h="Question">' + statusChip(s) + (s.project_name ? '<span class="proj">' + esc(s.project_name) + "</span>" : "") +
       '<div class="q">' + esc(s.question) + '</div><div class="meta">' + meta.map(function (m) { return "<span>" + esc(m) + "</span>"; }).join("") +
-      '<button class="linkbtn" type="button" data-hist="' + s.id + '">History</button><br /><a href="chat/comments.html">  Your Comments</a></div></td>';
+      '<button class="linkbtn" type="button" data-hist="' + s.id + '">History</button><br/><a href="chat/comments.html">  Yours Comments</a></div></td>';
 
     var canVote = s.accepting_votes && v.signed_in && s.my_score == null;
     var btns = "";
