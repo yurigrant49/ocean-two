@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Ocean Two | Services — Admin</title>
+<style>
+:root { --navy:#123b4a; --sea:#247f89; --ink:#20343a; --muted:#62757a; --line:#e3e9e7; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Inter, "Segoe UI", Arial, sans-serif; color: var(--ink); background: #f6f8f7; line-height: 1.5; }
+header { background: var(--navy); color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+header h1 { margin: 0; font-size: 1.15rem; }
+header a { color: #8bd6cc; font-size: .9rem; }
+main { max-width: 1100px; margin: auto; padding: 24px; }
+.login { display: flex; gap: 8px; max-width: 520px; }
+input { flex: 1; border: 1.5px solid var(--line); border-radius: 8px; padding: 10px 12px; font: inherit; }
+button { font: inherit; font-weight: 700; border: 0; border-radius: 8px; padding: 9px 14px; cursor: pointer; }
+.go { background: var(--sea); color: white; }
+.ok { background: #1d6b3a; color: white; }
+.no { background: #f3dede; color: #8a2a2a; }
+.muted { color: var(--muted); }
+h2 { color: var(--navy); font-size: 1.1rem; margin: 30px 0 10px; }
+table { width: 100%; border-collapse: collapse; background: white; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; font-size: .9rem; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { background: #eef5f4; color: var(--navy); font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; }
+td.actions { white-space: nowrap; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: .72rem; font-weight: 700; background: #eef2f1; }
+.tag.approved { background: #e3f6ea; color: #1d6b3a; } .tag.rejected { background: #f3dede; color: #8a2a2a; } .tag.pending { background: #fdf1d6; color: #7a5a10; }
+.err { color: #8a2a2a; }
+</style>
+</head>
+<body>
+<header><h1>Trusted Services — moderation</h1><a href="services.html">← Back to the public page</a></header>
+<main>
+  <form class="login" id="login">
+    <input id="token" type="password" placeholder="Admin token" autocomplete="current-password" required>
+    <button class="go">Open</button>
+  </form>
+  <p class="muted" style="font-size:.85rem">The token is the ADMIN_TOKEN value from the Render service. It is kept only for this browser tab.</p>
+  <div id="app"></div>
+</main>
+<script>
+(() => {
+  const API = (new URLSearchParams(location.search).get('api') || window.SERVICES_API ||
+               'https://services-directory-api.onrender.com').replace(/\/$/, '');
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const app = document.getElementById('app');
+  let token = sessionStorage.getItem('sd_admin') || '';
+
+  async function call(path, opts = {}) {
+    const res = await fetch(API + path, { ...opts, headers: { 'Content-Type': 'application/json', 'X-Admin-Token': token, ...(opts.headers || {}) } });
+    if (res.status === 401) { sessionStorage.removeItem('sd_admin'); token = ''; throw new Error('Wrong admin token.'); }
+    if (!res.ok) throw new Error('Request failed (' + res.status + ')');
+    return res.json();
+  }
+
+  async function load() {
+    if (!token) return;
+    app.innerHTML = '<p class="muted">Loading…</p>';
+    try {
+      const [pending, providers] = await Promise.all([call('/admin/pending'), call('/admin/providers')]);
+      app.innerHTML = `
+        <h2>Waiting for review (${pending.length})</h2>
+        ${pending.length ? `<table><thead><tr><th>Provider</th><th>Category</th><th>Rating</th><th>Comment</th><th>From</th><th></th></tr></thead><tbody>
+          ${pending.map(p => `<tr>
+            <td><b>${esc(p.name)}</b> <span class="tag ${esc(p.provider_status)}">${p.provider_status === 'pending' ? 'new provider' : 'existing'}</span><br>
+              <span class="muted">${esc([p.address, p.phone, p.website].filter(Boolean).join(' · '))}</span></td>
+            <td>${esc(p.category)}</td><td>${'★'.repeat(p.rating)}</td><td>${esc(p.comment)}</td>
+            <td>${esc(p.resident_label || '—')}<br><span class="muted">${new Date(p.created_at).toLocaleDateString()}</span></td>
+            <td class="actions"><button class="ok" data-rec="${p.rec_id}" data-s="approved">Approve</button> <button class="no" data-rec="${p.rec_id}" data-s="rejected">Reject</button></td>
+          </tr>`).join('')}</tbody></table>` : '<p class="muted">Nothing to review.</p>'}
+        <h2>Published and rejected providers</h2>
+        <p class="muted" style="font-size:.85rem">After approval the service tries to match each provider on Google Maps. Check the Map link; if it points to the wrong business, reject and ask the resident to add the full address.</p>
+        ${providers.length ? `<table><thead><tr><th>Provider</th><th>Category</th><th>Residents</th><th>Status</th><th></th></tr></thead><tbody>
+          ${providers.map(p => `<tr>
+            <td><b>${esc(p.name)}</b><br><span class="muted">${esc(p.address || '')}</span>
+              ${/^https?:\/\//.test(p.google_maps_url || '') ? ` · <a href="${esc(p.google_maps_url)}" target="_blank" rel="noopener">Map</a>` : ' <span class="muted">(not matched on Google)</span>'}</td>
+            <td>${esc(p.category)}</td><td>${p.resident_count}</td><td><span class="tag ${esc(p.status)}">${esc(p.status)}</span></td>
+            <td class="actions">${p.status === 'approved'
+              ? `<button class="no" data-prov="${p.id}" data-s="rejected">Unpublish</button>`
+              : `<button class="ok" data-prov="${p.id}" data-s="approved">Publish</button>`}</td>
+          </tr>`).join('')}</tbody></table>` : '<p class="muted">None yet.</p>'}`;
+      app.querySelectorAll('button[data-s]').forEach(b => b.onclick = async () => {
+        b.disabled = true;
+        const path = b.dataset.rec ? `/admin/recommendations/${b.dataset.rec}` : `/admin/providers/${b.dataset.prov}`;
+        try { await call(path, { method: 'POST', body: JSON.stringify({ status: b.dataset.s }) }); load(); }
+        catch (e) { alert(e.message); b.disabled = false; }
+      });
+    } catch (e) { app.innerHTML = `<p class="err">${esc(e.message)}</p>`; }
+  }
+
+  document.getElementById('login').addEventListener('submit', e => {
+    e.preventDefault();
+    token = document.getElementById('token').value.trim();
+    sessionStorage.setItem('sd_admin', token);
+    load();
+  });
+  load();
+})();
+</script>
+</body>
+</html>
